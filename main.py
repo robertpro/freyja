@@ -12,7 +12,7 @@ LOCAL_UPLOAD_FOLDER = HOME + '/camera_data'
 DROPBOX_FOLDER = '/camera_data'
 LOCAL_IP_FILE = HOME + '/camera_data/ip'
 DROPBOX_IP_FILE = DROPBOX_FOLDER + '/ip'
-ACCESS_TOKEN = ''
+ACCESS_TOKEN = open(HOME + '/.access_token').read().splitlines()[0]
 
 
 def upload_videos():
