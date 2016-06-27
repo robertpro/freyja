@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-from argparse import Namespace, ArgumentParser
 import os
+from argparse import Namespace, ArgumentParser
+from requests.packages.urllib3.exceptions import NewConnectionError
+from requests.exceptions import ConnectionError
 
 import updown
 from network import get_public_ip
@@ -19,7 +21,10 @@ def upload_videos():
     args = Namespace(default=False, folder=DROPBOX_FOLDER, no=False, rootdir=LOCAL_UPLOAD_FOLDER,
                      token=ACCESS_TOKEN,
                      yes=True)
-    updown.main(args)
+    try:
+        updown.main(args)
+    except ConnectionError:
+        print("Can't connect to Dropbox")
 
 
 def upload_ip():
@@ -32,10 +37,13 @@ def upload_ip():
         local_ip = ''
     public_ip = get_public_ip()
 
-    if local_ip != public_ip:
+    if (local_ip != public_ip) or public_ip == '':
         with open(LOCAL_IP_FILE, 'w') as f:
             f.write(public_ip)
-        updown.TransferFile(ACCESS_TOKEN).upload_file(LOCAL_IP_FILE, DROPBOX_IP_FILE)
+        try:
+            updown.TransferFile(ACCESS_TOKEN).upload_file(LOCAL_IP_FILE, DROPBOX_IP_FILE)
+        except NewConnectionError:
+            print("Can't connect to Dropbox")
 
 
 def main():
