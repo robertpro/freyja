@@ -260,4 +260,4 @@ class TransferFile(object):
         dbx = dropbox.Dropbox(self.access_token)
 
         with open(file_from, 'rb') as f:
-            dbx.files_upload(f, file_to)
+            dbx.files_upload(f, file_to, mode=dropbox.files.WriteMode.overwrite)
